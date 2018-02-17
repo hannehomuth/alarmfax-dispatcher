@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.feuerwehr.kremmen</groupId>
+    <artifactId>alarmfax-dispatcher</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    
+    <name>alarmfax-dispatcher</name>
+    
+    
+    <!-- Liste der Entwickler dieser Software. Sollten Sie an der Software
+    mitgearbeitet haben, tragen Sie sich hier ein. -->
+    <developers>
+        <developer>
+            <name>Johannes Homuth</name>
+            <organization>Feuerwehr Stadt Kremmen - Loeschzug 2 (Beetz-Sommerfeld)</organization>
+            <organizationUrl>http://ffw-beetz-sommerfeld.de</organizationUrl>
+            <roles>
+                <role>Initiator</role>
+                <role>Entwickler</role>
+            </roles>
+        </developer>
+    </developers>
+    
+    <!-- Für Release Zwecke - und releasen mache nur ich :-) -->
+    <scm>
+        <connection>scm:git:https://github.com/hannehomuth/alarmfax-dispatcher.git</connection>
+    </scm>
+    
+    <!-- Eigenschaften dieses Projekts -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <!-- Forciere die Verwendung von Java 1.8 und Maven 3.3.3 -->
+        <enforced.java.version>[1.8,1.9]</enforced.java.version>
+        <enforced.mvn.version>[3.3.3]</enforced.mvn.version>
+    </properties>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- Für das auslesen der Mails -->
+            <dependency>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>1.5.0-b01</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>2.0.8</version>
+            </dependency>
+        
+            
+            
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.7</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.jansi</groupId>
+                <artifactId>jansi</artifactId>
+                <version>1.8</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    
+    <dependencies>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+        </dependency>
+               
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <!-- Forciere ein paar Regeln (falls sich ein anderer neben mir
+            erbarmen sollte daran mitzuarbeiten -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce-project-java-version</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <ignoreCache>true</ignoreCache>
+                            <fail>true</fail>
+                            <rules>                                
+                                <requireJavaVersion>
+                                    <version>${enforced.java.version}</version>
+                                    <message>
+<![CDATA[
+#############################################################
+# Falsche Java Version!
+#############################################################
+# Bitte baue mit der in Property "enforced.java.version"
+# angegebenen Java Version
+#############################################################]]>
+                                    </message>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>${enforced.mvn.version}</version>
+                                    <message>
+<![CDATA[
+#############################################################
+# Falsche Maven Version
+#############################################################
+# Bitte baue mit der in Property "enforced.mvn.version" 
+# angegebenen Maven Version
+###############################################################
+]]>
+                                    </message>
+                                </requireMavenVersion>                                                                       
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>                        
+                    </execution>                                       
+                </executions>                    
+            </plugin>    
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>                        
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- Used to show some properties out of manifest in application -->
+                            <mainClass>de.feuerwehr.kremmen.dispatcher.AlarmFaxDispatcher</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>                       
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Create a full distribution to deliver everything to the customer -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/dist.xml</descriptor>
+                    </descriptors>                   
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>  
+        </plugins>
+    </build>
+    
+    
+    <repositories>
+
+        <repository>
+            <id>clojars.org</id>
+            <url>http://clojars.org/repo</url>
+        </repository>
+        <repository>
+            <id>com.springsource.repository.bundles.external</id>
+            <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+            <url>http://repository.springsource.com/maven/bundles/external</url>
+        </repository>
+        <repository>
+            <id>novamens.repository.external</id>
+            <name>novamens Releases</name>
+            <url>http://maven.novamens.com/</url>
+        </repository>
+        <repository>
+            <id>kenai.repository.external</id>
+            <name>Kenai Releases</name>
+            <url>https://nbpwr.kenai.com/maven-repository/releases</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+</project>

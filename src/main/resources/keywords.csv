@@ -1,0 +1,43 @@
+B:Klein
+B:PKW
+B:Lkw
+B:Schornstein
+B:Gebäude klein
+B:Gebäude groß
+B:Sonderobjekt
+B:BMA
+B:Fläche
+B:Wald
+B:Wald groß
+B:Wald im WSP
+B:Schiene
+B:Boot
+B:Schiff
+B:Gefahrgut
+B:Kleinflugzeug
+B:Großflugzeug
+B:Explosion
+H:klein
+H:Natur
+H:Hilfeleistung
+H:Türnotöffnung
+H:VU ohne P
+H:VU mit P
+H:VU Klemm
+H:VU LKW/Bus
+H:VU Schiene
+H:VU Schiff
+H:Flugzeugunfall klein
+H:Flugzeugunfall groß
+H:Person auf Schiene
+H:Person im Wasser/Eis
+H:Rettung aus Höhen und Tiefen
+H:Gas
+H:Gefahrgut klein
+H:Gefahrgut groß
+H:Einsturz
+H:Öl Land
+H:Öl auf Wasser
+H:Tier in Not
+H:Kommunal
+H:Person-TMR

@@ -2,6 +2,7 @@ package de.feuerwehr.kremmen.dispatcher.ocr;
 
 import de.feuerwehr.kremmen.dispatcher.alarm.Adress;
 import de.feuerwehr.kremmen.dispatcher.alarm.AlarmFax;
+import de.feuerwehr.kremmen.dispatcher.alarm.Coordinates;
 import de.feuerwehr.kremmen.dispatcher.config.Config;
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -23,6 +26,8 @@ import java.util.Scanner;
  */
 public class OCRToAlarmMapper {
 
+    
+    private static final Logger LOG = LoggerFactory.getLogger(OCRToAlarmMapper.class);
     /**
      * Method tries to find relevant fields from txt file
      *
@@ -32,13 +37,16 @@ public class OCRToAlarmMapper {
     public static void mapOCRToAlarm(File txtFile, AlarmFax alarm) throws OCRException {
         try {
             /* Copy file content to string */
-            String faxContent = readFile(txtFile.getAbsolutePath(), Charset.defaultCharset());
+            String faxContent = readFile(txtFile.getAbsolutePath(), Charset.forName("UTF-8"));
             /* Remove spaces */
             String alarmFaxText = faxContent.trim().replaceAll(" +", " ");
+            LOG.debug("Found following alarmtext\n{}",faxContent);
             if (alarmFaxText.toLowerCase().contains("alarmfax")) {
                 alarm.setAlarmfaxDetected(Boolean.TRUE);
                 alarm.setMailAddresses(getPossibleRics(alarmFaxText));
                 alarm.setAlarmKey(determineAlarmKey(alarmFaxText));
+                alarm.setCoordinates(getCoordinates(alarmFaxText));
+                alarm.setAdditionalInfo(determineAdditionalInfo(txtFile));
                 alarm.setAddress(determineAddress(txtFile));
                 alarm.setSituation(determineAlarmText(txtFile));
             }
@@ -47,6 +55,29 @@ public class OCRToAlarmMapper {
         }
     }
 
+    private static Coordinates getCoordinates(String alarmFaxText) throws OCRException{
+        Coordinates coordinates = new Coordinates();
+        Properties props = new Properties();
+        try {
+            props.load(new FileInputStream(new File(Config.get(Config.KEY_SPECIAL_STREET_FILE))));
+        } catch (IOException ex) {
+            throw new OCRException("Unable to detect special streets", ex);
+        }
+        String flattenAlarmText = flatten(alarmFaxText);
+        for (Object key : props.keySet()) {
+            String keyString = (String) key;
+            String flattenString = flatten(keyString);
+            if (flattenAlarmText.contains(flattenString)) {
+                String latlong = props.getProperty(keyString);
+                coordinates.setLatitude(latlong.split(",")[0]);
+                coordinates.setLongitude(latlong.split(",")[1]);
+                coordinates.setFound(true);
+                break;
+            }
+        }
+        return coordinates;
+    }
+    
     private static String readFile(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
@@ -55,9 +86,11 @@ public class OCRToAlarmMapper {
     private static String determineAlarmKey(String alarmText) throws FileNotFoundException {
         List<String> keyWords = getFileContentLineByLine(new File(Config.get(Config.KEY_KEYWORD_FILE)));
         String flattenAlarmText = flatten(alarmText);
+        LOG.debug("Using flattend version \n{}",flattenAlarmText);
         for (String keyWord : keyWords) {
             String keyWordFlatten = flatten(keyWord);
-            if (flattenAlarmText.contains(keyWordFlatten)) {
+            LOG.debug("Checking whether to find keyword :{}",keyWordFlatten);
+            if (flattenAlarmText.contains(keyWordFlatten) || flattenAlarmText.replaceAll("i", "l").replaceAll("hr", "h:").replaceAll("bi", "b:").contains(keyWordFlatten)) {
                 return keyWord;
             }
         }
@@ -85,15 +118,24 @@ public class OCRToAlarmMapper {
     private static String determineAlarmText(File txtFile) throws FileNotFoundException {
         Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
         int lineOfEreignis = getLineNumberOf("Ereignis:", faxContentMap);
-        return getLine(lineOfEreignis, faxContentMap).replace("Ereignis:", "").trim();
+        String ereignis = getLine(lineOfEreignis, faxContentMap).replace("Ereignis:", "").trim();
+        return (ereignis == null || ereignis.isEmpty()) ? "Keine weiteren Angaben":ereignis;
     }
 
+    private static String determineAdditionalInfo(File txtFile) throws FileNotFoundException{
+        Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
+        int lineOfCountry = getLineNumberOf("DE-Brandenburg", faxContentMap); 
+        String additionalInfo = getLine(lineOfCountry - 3, faxContentMap).trim();
+        return additionalInfo;
+        
+    }
+    
     private static Adress determineAddress(File txtFile) throws FileNotFoundException {
         Adress address = new Adress();
         Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
-        int lineOfCountry = getLineNumberOf("DE-Brandenburg", faxContentMap);
+        int lineOfCountry = getLineNumberOf("DE-Brandenburg", faxContentMap); 
         String plzCityAndArea = getLine(lineOfCountry - 1, faxContentMap).replace("Einsatzort:", "").trim();
-        String streetHouseNumber = getLine(lineOfCountry - 2, faxContentMap).trim();
+        String streetHouseNumber = getLine(lineOfCountry - 2, faxContentMap).replace("Einsatzort:", "").trim();
         int i = 0;
         while (i < streetHouseNumber.length() && !Character.isDigit(streetHouseNumber.charAt(i))) {
             i++;

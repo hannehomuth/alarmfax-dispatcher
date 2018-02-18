@@ -126,6 +126,9 @@ public class Config {
 
     @ConfigParam(mandatory = true, defaultValue = "false")
     public static final String KEY_SMTP_PASS = "SMTP_PASS";
+    
+    @ConfigParam(mandatory = false, defaultValue = "false")
+    public static final String KEY_SPECIAL_STREET_FILE = "SPECIAL_STREET_FILE";
     /**
      * Logger für diese Klasse
      */

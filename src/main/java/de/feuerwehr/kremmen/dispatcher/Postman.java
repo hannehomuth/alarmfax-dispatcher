@@ -240,7 +240,9 @@ public class Postman implements AlarmHeadquarter {
                 message.setSubject(fax.getAlarmKey() + sdf.format(new Date()));
                 message.setSentDate(new Date());
                 // Now set the actual message
-                message.setText(fax.convertForBosmon());
+                String messageText = fax.convertForBosmon();
+                message.setText(messageText);
+                LOG.info("Going to send following message\n\n{}",messageText);
                 SMTPTransport transport = (SMTPTransport) session.getTransport("smtp");
                 transport.connect(Config.get(Config.KEY_SMTP_HOST), Config.get(Config.KEY_SMTP_USER), Config.get(Config.KEY_SMTP_PASS));
                 // Send message

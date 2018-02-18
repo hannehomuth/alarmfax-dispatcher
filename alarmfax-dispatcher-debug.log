@@ -1,11 +1,91 @@
-[INFO ] 21:22:56.056 - [main] - d.f.k.d.AlarmFaxDispatcher - Alarmfax-Dispatcher started...
-[INFO ] 21:27:11.277 - [main] - d.f.k.d.AlarmFaxDispatcher - Alarmfax-Dispatcher started...
-[INFO ] 21:27:11.309 - [main] - d.f.k.d.c.Config - 
+[INFO ] 11:15:24.532 - [main] - d.f.k.d.AlarmFaxDispatcher - Alarmfax-Dispatcher started...
+[INFO ] 11:15:24.580 - [main] - d.f.k.d.c.Config - 
 Konfiguration:
 =======================
 BOSMON_USER:                  
 ------------------------------------------------------------
-SMTP_USER:                    h254832_0-alarmfax
+SMTP_USER:                    h254832_0-alarmfax-test
+------------------------------------------------------------
+BOSMON_PASS:                  
+------------------------------------------------------------
+SMTP_PASS:                    feuerwehr112911
+------------------------------------------------------------
+BOSMON_SERVER_PORT:           80
+------------------------------------------------------------
+DO_OCR:                       true
+------------------------------------------------------------
+ABBYY_OCR_API_KEY:            gvg4I1hKex0k75DOFMEezlVQ
+------------------------------------------------------------
+FORCE_RIC:                    
+------------------------------------------------------------
+RIC_MAPPING_FILE:             /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/ricmapping.properties
+------------------------------------------------------------
+SENDER_ADDRESS_VALIDATION:    true
+------------------------------------------------------------
+LINE_SEPARATOR:               |
+------------------------------------------------------------
+KEYWORD_FILE:                 /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/keywords.csv
+------------------------------------------------------------
+ALARM_SUPRESS_TIME:           5
+------------------------------------------------------------
+IMAP_SERVER:                  imap.1blu.de
+------------------------------------------------------------
+SMTP_HOST:                    smtp.1blu.de
+------------------------------------------------------------
+BOSMON_SERVER_NAME:           127.0.0.1
+------------------------------------------------------------
+MAX_ALARM_AGE:                5
+------------------------------------------------------------
+RETURN_TEST_TXT:              false
+------------------------------------------------------------
+KEY_SPECIAL_STREET_FILE:      /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/special-streets.properties
+------------------------------------------------------------
+DEBUG_MAIL:                   false
+------------------------------------------------------------
+SMTP_FROM:                    alarmfax-test@feuerwehr-kremmen.de
+------------------------------------------------------------
+SPECIAL_STREET_FILE:          false
+------------------------------------------------------------
+BOSMON_CHANNEL_NAME:          in
+------------------------------------------------------------
+POLLING_SECONDS:              10
+------------------------------------------------------------
+IMAP_USER:                    h254832_0-alarmfax-test
+------------------------------------------------------------
+ALLOWED_SENDER:               alarm@ffw-beetz-sommerfeld.de
+------------------------------------------------------------
+ABBYY_OCR_APPLICATION_ID:     faxToBosmon
+------------------------------------------------------------
+IMAP_PASS:                    feuerwehr112911
+------------------------------------------------------------
+
+
+[INFO ] 11:15:26.357 - [main] - d.f.k.d.Postman - Nachricht empfangen: multipart/mixed; 
+	boundary=Apple-Mail-4011164E-A260-4053-8B2B-5F798BE298EB
+[INFO ] 11:15:26.359 - [main] - d.f.k.d.Postman - Checking email alarm@ffw-beetz-sommerfeld.de
+[DEBUG] 11:15:26.371 - [main] - d.f.k.d.Postman - Found 2 parts
+[INFO ] 11:15:26.371 - [main] - d.f.k.d.Postman - Found attachment in mail
+[ERROR] 11:15:33.330 - [main] - d.f.k.d.Postman - Unable to determine alarm content...
+de.feuerwehr.kremmen.dispatcher.ocr.OCRException: Unable to detect special streets
+	at de.feuerwehr.kremmen.dispatcher.ocr.OCRToAlarmMapper.getCoordinates(OCRToAlarmMapper.java:58)
+	at de.feuerwehr.kremmen.dispatcher.ocr.OCRToAlarmMapper.mapOCRToAlarm(OCRToAlarmMapper.java:43)
+	at de.feuerwehr.kremmen.dispatcher.Postman.handleMultipart(Postman.java:173)
+	at de.feuerwehr.kremmen.dispatcher.Postman.fetchMailsAndQuitConnection(Postman.java:103)
+	at de.feuerwehr.kremmen.dispatcher.AlarmFaxDispatcher.process(AlarmFaxDispatcher.java:46)
+	at de.feuerwehr.kremmen.dispatcher.AlarmFaxDispatcher.main(AlarmFaxDispatcher.java:33)
+Caused by: java.io.FileNotFoundException: false (Datei oder Verzeichnis nicht gefunden)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at de.feuerwehr.kremmen.dispatcher.ocr.OCRToAlarmMapper.getCoordinates(OCRToAlarmMapper.java:56)
+	... 5 common frames omitted
+[INFO ] 11:17:30.514 - [main] - d.f.k.d.AlarmFaxDispatcher - Alarmfax-Dispatcher started...
+[INFO ] 11:17:30.546 - [main] - d.f.k.d.c.Config - 
+Konfiguration:
+=======================
+BOSMON_USER:                  
+------------------------------------------------------------
+SMTP_USER:                    h254832_0-alarmfax-test
 ------------------------------------------------------------
 BOSMON_PASS:                  
 ------------------------------------------------------------
@@ -41,13 +121,15 @@ RETURN_TEST_TXT:              false
 ------------------------------------------------------------
 DEBUG_MAIL:                   false
 ------------------------------------------------------------
-SMTP_FROM:                    alarmfax@feuerwehr-kremmen.de
+SMTP_FROM:                    alarmfax-test@feuerwehr-kremmen.de
+------------------------------------------------------------
+SPECIAL_STREET_FILE:          /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/special-streets.properties
 ------------------------------------------------------------
 BOSMON_CHANNEL_NAME:          in
 ------------------------------------------------------------
 POLLING_SECONDS:              10
 ------------------------------------------------------------
-IMAP_USER:                    h254832_0-alarmfax
+IMAP_USER:                    h254832_0-alarmfax-test
 ------------------------------------------------------------
 ALLOWED_SENDER:               alarm@ffw-beetz-sommerfeld.de
 ------------------------------------------------------------
@@ -57,3 +139,163 @@ IMAP_PASS:                    feuerwehr112911
 ------------------------------------------------------------
 
 
+[INFO ] 11:17:54.300 - [main] - d.f.k.d.Postman - Nachricht empfangen: multipart/mixed; 
+	boundary=Apple-Mail-9448AF3C-AB8D-4CDB-BDB2-4D3E39D03A17
+[INFO ] 11:17:54.302 - [main] - d.f.k.d.Postman - Checking email alarm@ffw-beetz-sommerfeld.de
+[DEBUG] 11:17:54.318 - [main] - d.f.k.d.Postman - Found 2 parts
+[INFO ] 11:17:54.319 - [main] - d.f.k.d.Postman - Found attachment in mail
+[INFO ] 11:18:00.779 - [main] - d.f.k.d.AlarmFaxDispatcher - 1 Alarmfax empfangen...
+[INFO ] 11:18:01.429 - [main] - d.f.k.d.Postman - Sent message successfully to alarmmonitor-sommerfeld@feuerwehr-kremmen.de
+[INFO ] 11:21:53.757 - [main] - d.f.k.d.AlarmFaxDispatcher - Alarmfax-Dispatcher started...
+[INFO ] 11:21:53.794 - [main] - d.f.k.d.c.Config - 
+Konfiguration:
+=======================
+BOSMON_USER:                  
+------------------------------------------------------------
+SMTP_USER:                    h254832_0-alarmfax-test
+------------------------------------------------------------
+BOSMON_PASS:                  
+------------------------------------------------------------
+SMTP_PASS:                    feuerwehr112911
+------------------------------------------------------------
+BOSMON_SERVER_PORT:           80
+------------------------------------------------------------
+DO_OCR:                       true
+------------------------------------------------------------
+ABBYY_OCR_API_KEY:            gvg4I1hKex0k75DOFMEezlVQ
+------------------------------------------------------------
+FORCE_RIC:                    
+------------------------------------------------------------
+RIC_MAPPING_FILE:             /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/ricmapping.properties
+------------------------------------------------------------
+SENDER_ADDRESS_VALIDATION:    true
+------------------------------------------------------------
+LINE_SEPARATOR:               |
+------------------------------------------------------------
+KEYWORD_FILE:                 /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/keywords.csv
+------------------------------------------------------------
+ALARM_SUPRESS_TIME:           5
+------------------------------------------------------------
+IMAP_SERVER:                  imap.1blu.de
+------------------------------------------------------------
+SMTP_HOST:                    smtp.1blu.de
+------------------------------------------------------------
+BOSMON_SERVER_NAME:           127.0.0.1
+------------------------------------------------------------
+MAX_ALARM_AGE:                5
+------------------------------------------------------------
+RETURN_TEST_TXT:              false
+------------------------------------------------------------
+DEBUG_MAIL:                   false
+------------------------------------------------------------
+SMTP_FROM:                    alarmfax-test@feuerwehr-kremmen.de
+------------------------------------------------------------
+SPECIAL_STREET_FILE:          /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/special-streets.properties
+------------------------------------------------------------
+BOSMON_CHANNEL_NAME:          in
+------------------------------------------------------------
+POLLING_SECONDS:              10
+------------------------------------------------------------
+IMAP_USER:                    h254832_0-alarmfax-test
+------------------------------------------------------------
+ALLOWED_SENDER:               alarm@ffw-beetz-sommerfeld.de
+------------------------------------------------------------
+ABBYY_OCR_APPLICATION_ID:     faxToBosmon
+------------------------------------------------------------
+IMAP_PASS:                    feuerwehr112911
+------------------------------------------------------------
+
+
+[INFO ] 11:22:17.525 - [main] - d.f.k.d.Postman - Nachricht empfangen: multipart/mixed; 
+	boundary=Apple-Mail-7DF81401-AFD0-478B-A6B4-61A77CF79840
+[INFO ] 11:22:17.527 - [main] - d.f.k.d.Postman - Checking email alarm@ffw-beetz-sommerfeld.de
+[DEBUG] 11:22:17.537 - [main] - d.f.k.d.Postman - Found 2 parts
+[INFO ] 11:22:17.538 - [main] - d.f.k.d.Postman - Found attachment in mail
+[INFO ] 11:22:24.424 - [main] - d.f.k.d.AlarmFaxDispatcher - 1 Alarmfax empfangen...
+[INFO ] 11:22:24.431 - [main] - d.f.k.d.Postman - Going to send following message
+
+ALARM_KEY:H:Natur
+COORDINATES:52.792093,13.173321
+SITUATION:Baum über Strasse
+[INFO ] 11:22:25.058 - [main] - d.f.k.d.Postman - Sent message successfully to alarm@ffw-beetz-sommerfeld.de
+[INFO ] 13:58:41.563 - [main] - d.f.k.d.AlarmFaxDispatcher - Alarmfax-Dispatcher started...
+[INFO ] 13:58:41.595 - [main] - d.f.k.d.c.Config - 
+Konfiguration:
+=======================
+BOSMON_USER:                  
+------------------------------------------------------------
+SMTP_USER:                    h254832_0-alarmfax-test
+------------------------------------------------------------
+BOSMON_PASS:                  
+------------------------------------------------------------
+SMTP_PASS:                    feuerwehr112911
+------------------------------------------------------------
+BOSMON_SERVER_PORT:           80
+------------------------------------------------------------
+DO_OCR:                       true
+------------------------------------------------------------
+ABBYY_OCR_API_KEY:            gvg4I1hKex0k75DOFMEezlVQ
+------------------------------------------------------------
+FORCE_RIC:                    
+------------------------------------------------------------
+RIC_MAPPING_FILE:             /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/ricmapping.properties
+------------------------------------------------------------
+SENDER_ADDRESS_VALIDATION:    true
+------------------------------------------------------------
+LINE_SEPARATOR:               |
+------------------------------------------------------------
+KEYWORD_FILE:                 /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/keywords.csv
+------------------------------------------------------------
+ALARM_SUPRESS_TIME:           5
+------------------------------------------------------------
+IMAP_SERVER:                  imap.1blu.de
+------------------------------------------------------------
+SMTP_HOST:                    smtp.1blu.de
+------------------------------------------------------------
+BOSMON_SERVER_NAME:           127.0.0.1
+------------------------------------------------------------
+MAX_ALARM_AGE:                5
+------------------------------------------------------------
+RETURN_TEST_TXT:              false
+------------------------------------------------------------
+DEBUG_MAIL:                   false
+------------------------------------------------------------
+SMTP_FROM:                    alarmfax-test@feuerwehr-kremmen.de
+------------------------------------------------------------
+SPECIAL_STREET_FILE:          /home/jhomuth/projekte/alarmfax-dispatcher/src/main/resources/special-streets.properties
+------------------------------------------------------------
+BOSMON_CHANNEL_NAME:          in
+------------------------------------------------------------
+POLLING_SECONDS:              10
+------------------------------------------------------------
+IMAP_USER:                    h254832_0-alarmfax-test
+------------------------------------------------------------
+ALLOWED_SENDER:               alarm@ffw-beetz-sommerfeld.de
+------------------------------------------------------------
+ABBYY_OCR_APPLICATION_ID:     faxToBosmon
+------------------------------------------------------------
+IMAP_PASS:                    feuerwehr112911
+------------------------------------------------------------
+
+
+[INFO ] 14:00:22.100 - [main] - d.f.k.d.Postman - Nachricht empfangen: multipart/mixed; 
+	boundary=Apple-Mail-0B1D79D7-A66A-440F-8546-FC8C5C9B23B8
+[INFO ] 14:00:22.102 - [main] - d.f.k.d.Postman - Checking email alarm@ffw-beetz-sommerfeld.de
+[DEBUG] 14:00:22.116 - [main] - d.f.k.d.Postman - Found 2 parts
+[INFO ] 14:00:22.116 - [main] - d.f.k.d.Postman - Found attachment in mail
+[INFO ] 14:02:56.014 - [main] - d.f.k.d.AlarmFaxDispatcher - 1 Alarmfax empfangen...
+[INFO ] 14:02:56.023 - [main] - d.f.k.d.Postman - Going to send following message
+
+ALARM_KEY:H:Oel Land
+STREET:Einsatzort:              Beetzer Dorfstrasse
+HOUSENUMBER:159
+PLZ:16766
+CITY:Kremmen
+CITYAREA:Beetz
+SITUATION:ca. 1km lang vermutl. Hydraulikoel
+[INFO ] 14:02:56.735 - [main] - d.f.k.d.Postman - Sent message successfully to alarm@ffw-beetz-sommerfeld.de
+[INFO ] 14:15:13.154 - [main] - d.f.k.d.Postman - Nachricht empfangen: multipart/mixed; 
+	boundary=Apple-Mail-3B0A45D7-C172-4118-86AC-91EFCA0D9C9D
+[INFO ] 14:15:13.155 - [main] - d.f.k.d.Postman - Checking email alarm@ffw-beetz-sommerfeld.de
+[DEBUG] 14:15:13.156 - [main] - d.f.k.d.Postman - Found 2 parts
+[INFO ] 14:15:13.156 - [main] - d.f.k.d.Postman - Found attachment in mail

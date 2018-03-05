@@ -1,24 +1,23 @@
 package de.feuerwehr.kremmen.dispatcher;
 
-import de.feuerwehr.kremmen.dispatcher.ocr.OCRScanner;
-import de.feuerwehr.kremmen.dispatcher.alarm.AlarmFax;
-import de.feuerwehr.kremmen.dispatcher.config.Config;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.smtp.SMTPTransport;
+import de.feuerwehr.kremmen.dispatcher.alarm.AlarmFax;
+import de.feuerwehr.kremmen.dispatcher.config.Config;
+import de.feuerwehr.kremmen.dispatcher.ocr.OCRScanner;
 import de.feuerwehr.kremmen.dispatcher.ocr.OCRToAlarmMapper;
-import de.feuerwehr.kremmen.dispatcher.util.Recipient;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.mail.*;
-import java.util.Properties;
 import de.feuerwehr.kremmen.dispatcher.util.AlarmHeadquarter;
+import de.feuerwehr.kremmen.dispatcher.util.Recipient;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -162,6 +161,7 @@ public class Postman implements AlarmHeadquarter {
                 LOG.info("Found attachment in mail");
                 InputStream is = p.getInputStream();
                 File f = new File(System.getProperty("java.io.tmpdir"), p.getFileName());
+                alarm.setFaxFile(f);
                 try (FileOutputStream fos = new FileOutputStream(f)) {
                     byte[] buf = new byte[4096];
                     int bytesRead;

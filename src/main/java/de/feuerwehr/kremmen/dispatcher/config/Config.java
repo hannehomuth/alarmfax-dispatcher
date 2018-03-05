@@ -1,6 +1,5 @@
 package de.feuerwehr.kremmen.dispatcher.config;
 
-import de.feuerwehr.kremmen.dispatcher.Postman;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -129,6 +128,15 @@ public class Config {
     
     @ConfigParam(mandatory = false, defaultValue = "false")
     public static final String KEY_SPECIAL_STREET_FILE = "SPECIAL_STREET_FILE";
+
+    @ConfigParam(mandatory = false, defaultValue = "")
+    public static final String KEY_TELEGRAM_API_TOKEN = "TELEGRAM_API_TOKEN";
+
+    @ConfigParam(mandatory = false, defaultValue = "")
+    public static final String KEY_TELEGRAM_BOT_USERNAME = "TELEGRAM_BOT_USER_NAME";
+
+    @ConfigParam(mandatory = false, defaultValue = "")
+    public static final String KEY_TELEGRAM_CHAT_MAPPING_FILE = "TELEGRAM_CHAT_MAPPING_FILE";
     /**
      * Logger für diese Klasse
      */

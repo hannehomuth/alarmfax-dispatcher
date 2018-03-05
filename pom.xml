@@ -76,11 +76,20 @@
                 <artifactId>jansi</artifactId>
                 <version>1.8</version>
             </dependency>
+            <dependency>
+                <groupId>org.telegram</groupId>
+                <artifactId>telegrambots</artifactId>
+                <version>3.6</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     
     
     <dependencies>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>

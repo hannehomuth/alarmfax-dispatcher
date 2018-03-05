@@ -44,6 +44,7 @@ public class OCRToAlarmMapper {
             if (alarmFaxText.toLowerCase().contains("alarmfax")) {
                 alarm.setAlarmfaxDetected(Boolean.TRUE);
                 alarm.setMailAddresses(getPossibleRics(alarmFaxText));
+                alarm.setTelegramChannelIDs(getPossibleTelegramChannels(alarmFaxText));
                 alarm.setAlarmKey(determineAlarmKey(alarmFaxText));
                 alarm.setCoordinates(getCoordinates(alarmFaxText));
                 alarm.setAdditionalInfo(determineAdditionalInfo(txtFile));
@@ -113,6 +114,23 @@ public class OCRToAlarmMapper {
             }
         }
         return forwardMailAddresses;
+    }
+    private static List<String> getPossibleTelegramChannels(String alarmText) throws OCRException {
+        List<String> telegramChants = new ArrayList<>();
+        Properties props = new Properties();
+        try {
+            props.load(new FileInputStream(new File(Config.get(Config.KEY_TELEGRAM_CHAT_MAPPING_FILE))));
+        } catch (IOException ex) {
+            throw new OCRException("Unable to detect telegram chat ids", ex);
+        }
+        String flattenAlarmText = flatten(alarmText);
+        for (Object key : props.keySet()) {
+            String keyString = (String) key;
+            if (flattenAlarmText.contains(keyString)) {
+                telegramChants.add(props.getProperty(keyString));
+            }
+        }
+        return telegramChants;
     }
 
     private static String determineAlarmText(File txtFile) throws FileNotFoundException {

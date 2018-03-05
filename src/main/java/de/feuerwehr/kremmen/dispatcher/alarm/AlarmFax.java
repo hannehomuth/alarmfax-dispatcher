@@ -1,5 +1,6 @@
 package de.feuerwehr.kremmen.dispatcher.alarm;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -26,8 +27,41 @@ public class AlarmFax {
     private Boolean alarmfaxDetected = Boolean.FALSE;
 
     private Coordinates coordinates;
-    
-        private String additionalInfo;
+
+    private String additionalInfo;
+
+    private List<String> telegramChannelIDs;
+
+    private File faxFile;
+
+    public File getFaxFile() {
+        return faxFile;
+    }
+
+    public void setFaxFile(File faxFile) {
+        this.faxFile = faxFile;
+    }
+
+
+    /**
+     * Get the value of telegramChannelIDs
+     *
+     * @return the value of telegramChannelIDs
+     */
+    public List<String> getTelegramChannelIDs() {
+        return telegramChannelIDs;
+    }
+
+    /**
+     * Set the value of telegramChannelIDs
+     *
+     * @param telegramChannelIDs new value of telegramChannelIDs
+     */
+    public void setTelegramChannelIDs(List<String> telegramChannelIDs) {
+        this.telegramChannelIDs = telegramChannelIDs;
+
+    }
+
 
     /**
      * Get the value of additionalInfo
@@ -46,7 +80,6 @@ public class AlarmFax {
     public void setAdditionalInfo(String additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
-
 
     /**
      * Get the value of coordinates
@@ -88,31 +121,31 @@ public class AlarmFax {
         StringBuilder builder = new StringBuilder();
         builder.append("ALARM_KEY:").append(decode(this.alarmKey)).append(LINE_BREAK);
         if (this.coordinates.isFound()) {
-            builder.append("COORDINATES:").append("N").append(this.coordinates.getLatitude().replace(".","")).append("E").append(this.coordinates.getLongitude().replace(".","")).append(LINE_BREAK);
+            builder.append("COORDINATES:").append("N").append(this.coordinates.getLatitude().replace(".", "")).append("E").append(this.coordinates.getLongitude().replace(".", "")).append(LINE_BREAK);
         } else {
             builder.append("STREET:").append(decode(this.address.getStreet())).append(LINE_BREAK);
-            if(this.address.getHousenumber() != null && !this.address.getHousenumber().isEmpty()){
-                builder.append("HOUSENUMBER:").append(this.address.getHousenumber()).append(LINE_BREAK);                
-            }else{
-                builder.append("HOUSENUMBER:").append("-").append(LINE_BREAK);                
+            if (this.address.getHousenumber() != null && !this.address.getHousenumber().isEmpty()) {
+                builder.append("HOUSENUMBER:").append(this.address.getHousenumber()).append(LINE_BREAK);
+            } else {
+                builder.append("HOUSENUMBER:").append("-").append(LINE_BREAK);
             }
             builder.append("PLZ:").append(this.address.getPostalCode()).append(LINE_BREAK);
             builder.append("CITY:").append(decode(this.address.getCity())).append(LINE_BREAK);
-            if(this.address.getCityArea() != null && !this.address.getCityArea().isEmpty()){
+            if (this.address.getCityArea() != null && !this.address.getCityArea().isEmpty()) {
                 builder.append("CITYAREA:").append(decode(this.address.getCityArea())).append(LINE_BREAK);
-            }else{
+            } else {
                 builder.append("CITYAREA:").append("-").append(LINE_BREAK);
             }
         }
 //        builder.append("LIVINGAREA:").append(this.address.getLivingarea()).append(LINE_BREAK);
         builder.append("SITUATION:").append(decode(this.situation));
-        if(this.additionalInfo != null && !this.additionalInfo.isEmpty()){
+        if (this.additionalInfo != null && !this.additionalInfo.isEmpty()) {
             builder.append(" (").append(this.additionalInfo).append(")");
         }
         return builder.toString();
     }
-    
-    private String decode(String s){
+
+    private String decode(String s) {
         return s.replaceAll("ß", "ss").replaceAll("ö", "oe").replaceAll("Ö", "Oe").replaceAll("Ä", "Ae").replaceAll("ä", "ae").replaceAll("Ü", "Ue").replaceAll("ü", "ue");
     }
 

@@ -3,13 +3,15 @@ package de.feuerwehr.kremmen.dispatcher;
 import de.feuerwehr.kremmen.dispatcher.alarm.AlarmFax;
 import de.feuerwehr.kremmen.dispatcher.config.Config;
 import de.feuerwehr.kremmen.dispatcher.config.ConfigurationException;
+import de.feuerwehr.kremmen.dispatcher.telegram.TelegramBot;
 import de.feuerwehr.kremmen.dispatcher.util.Recipient;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.List;
-
 import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.telegram.telegrambots.ApiContextInitializer;
 
 /**
  *
@@ -22,6 +24,7 @@ public class AlarmFaxDispatcher implements Recipient {
     private static final Logger LOG = LoggerFactory.getLogger(AlarmFaxDispatcher.class);
 
     public static void main(String[] args) {
+        ApiContextInitializer.init();
         LOG.info("Alarmfax-Dispatcher started...");
         try {
             Config.init(new File(args[0]));
@@ -69,6 +72,25 @@ public class AlarmFaxDispatcher implements Recipient {
             for (AlarmFax alarm : alarms) {
                 if (alarm.isAlarmfaxDetected()) {
                     postman.sendMail(alarm);
+                    if (alarm.getTelegramChannelIDs() != null && !alarm.getTelegramChannelIDs().isEmpty()) {
+                        for (String channelId : alarm.getTelegramChannelIDs()) {
+                            FileInputStream is = null;
+                            try {
+                                is = new FileInputStream(alarm.getFaxFile());
+                                TelegramBot.getInstance().sendDocument("Alarmfax", channelId, is, alarm.getFaxFile().getName());
+                            } catch (Exception e) {
+                                LOG.warn("Error during telegram send", e);
+                            } finally {
+                                if (is != null) {
+                                    try {
+                                        is.close();
+                                    } catch (Exception e) {
+                                        LOG.warn("Error during close of Fax Inputstream", e);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         } catch (Throwable e) {

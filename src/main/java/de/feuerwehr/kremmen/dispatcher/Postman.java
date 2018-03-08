@@ -103,7 +103,7 @@ public class Postman implements AlarmHeadquarter {
                                     /* check for attachment */
                                     message.getContent();
                                 }
-                                alarmMail.setAlarmTime(message.getSentDate());
+//                                alarmMail.setAlarmTime(message.getSentDate());
                                 alarmFax.add(alarmMail);
                                 
                             } catch (Exception ex) {

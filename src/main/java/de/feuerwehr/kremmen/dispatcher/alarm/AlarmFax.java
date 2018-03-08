@@ -3,7 +3,9 @@ package de.feuerwehr.kremmen.dispatcher.alarm;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Diese Klasse beschreibt einen eingehenden Alarm
@@ -12,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class AlarmFax {
 
-    private static final Logger LOG = Logger.getLogger(AlarmFax.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(AlarmFax.class.getSimpleName());
 
     private Adress address;
 
@@ -33,6 +35,7 @@ public class AlarmFax {
     private List<String> telegramChannelIDs;
 
     private File faxFile;
+
 
     public File getFaxFile() {
         return faxFile;
@@ -244,4 +247,18 @@ public class AlarmFax {
         this.alarmTime = alarmTime;
     }
 
+    public boolean isValidAlarmTime() {
+        if (this.alarmTime == null) {
+            return Boolean.FALSE;
+        }
+        long duration = new Date().getTime() - this.alarmTime.getTime();
+
+        long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(duration);
+        if (diffInSeconds > (60 * 5)) {
+            return Boolean.FALSE;
+        } else {
+            LOG.info("Alarm was detected {} seconds ago. It's okay...", diffInSeconds);
+        }
+        return Boolean.TRUE;
+    }
 }

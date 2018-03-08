@@ -70,7 +70,7 @@ public class AlarmFaxDispatcher implements Recipient {
         try {
             LOG.info(String.format("%s Alarmfax%sempfangen...", alarms.size(), alarms.size() == 1 ? " " : "e "));
             for (AlarmFax alarm : alarms) {
-                if (alarm.isAlarmfaxDetected()) {
+                if (alarm.isAlarmfaxDetected() && alarm.isValidAlarmTime()) {
                     postman.sendMail(alarm);
                     if (alarm.getTelegramChannelIDs() != null && !alarm.getTelegramChannelIDs().isEmpty()) {
                         for (String channelId : alarm.getTelegramChannelIDs()) {

@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public class OCRToAlarmMapper {
 
-    
     private static final Logger LOG = LoggerFactory.getLogger(OCRToAlarmMapper.class);
+
     /**
      * Method tries to find relevant fields from txt file
      *
@@ -40,7 +43,7 @@ public class OCRToAlarmMapper {
             String faxContent = readFile(txtFile.getAbsolutePath(), Charset.forName("UTF-8"));
             /* Remove spaces */
             String alarmFaxText = faxContent.trim().replaceAll(" +", " ");
-            LOG.debug("Found following alarmtext\n{}",faxContent);
+            LOG.debug("Found following alarmtext\n{}", faxContent);
             if (alarmFaxText.toLowerCase().contains("alarmfax")) {
                 alarm.setAlarmfaxDetected(Boolean.TRUE);
                 alarm.setMailAddresses(getPossibleRics(alarmFaxText));
@@ -50,13 +53,34 @@ public class OCRToAlarmMapper {
                 alarm.setAdditionalInfo(determineAdditionalInfo(txtFile));
                 alarm.setAddress(determineAddress(txtFile));
                 alarm.setSituation(determineAlarmText(txtFile));
+                alarm.setAlarmTime(getPossibleAlarmTime(txtFile));
             }
         } catch (IOException ex) {
             throw new OCRException("", ex);
         }
     }
 
-    private static Coordinates getCoordinates(String alarmFaxText) throws OCRException{
+    private static Date getPossibleAlarmTime(File txtFile) throws FileNotFoundException {
+        Date d = null;
+        Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
+        int lineOfDate = getLineNumberOf("Alarmzeit:", faxContentMap);
+        String line = flatten(getLine(lineOfDate, faxContentMap)).toLowerCase();
+        String replace = line.replace("alarmzeit:", "");
+
+        if (replace.length() != 16) {
+            LOG.warn("Illegal Date format in Alarmfax {}", replace);
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyHH:mm:ss");
+            try {
+                d = format.parse(replace);
+            } catch (ParseException ex) {
+                LOG.error("Unable to parse date");
+            }
+        }
+        return d;
+    }
+
+    private static Coordinates getCoordinates(String alarmFaxText) throws OCRException {
         Coordinates coordinates = new Coordinates();
         Properties props = new Properties();
         try {
@@ -78,7 +102,7 @@ public class OCRToAlarmMapper {
         }
         return coordinates;
     }
-    
+
     private static String readFile(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
@@ -87,10 +111,10 @@ public class OCRToAlarmMapper {
     private static String determineAlarmKey(String alarmText) throws FileNotFoundException {
         List<String> keyWords = getFileContentLineByLine(new File(Config.get(Config.KEY_KEYWORD_FILE)));
         String flattenAlarmText = flatten(alarmText);
-        LOG.debug("Using flattend version \n{}",flattenAlarmText);
+        LOG.debug("Using flattend version \n{}", flattenAlarmText);
         for (String keyWord : keyWords) {
             String keyWordFlatten = flatten(keyWord);
-            LOG.debug("Checking whether to find keyword :{}",keyWordFlatten);
+            LOG.debug("Checking whether to find keyword :{}", keyWordFlatten);
             if (flattenAlarmText.contains(keyWordFlatten) || flattenAlarmText.replaceAll("i", "l").replaceAll("hr", "h:").replaceAll("bi", "b:").contains(keyWordFlatten)) {
                 return keyWord;
             }
@@ -115,6 +139,7 @@ public class OCRToAlarmMapper {
         }
         return forwardMailAddresses;
     }
+
     private static List<String> getPossibleTelegramChannels(String alarmText) throws OCRException {
         List<String> telegramChants = new ArrayList<>();
         Properties props = new Properties();
@@ -137,21 +162,21 @@ public class OCRToAlarmMapper {
         Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
         int lineOfEreignis = getLineNumberOf("Ereignis:", faxContentMap);
         String ereignis = getLine(lineOfEreignis, faxContentMap).replace("Ereignis:", "").trim();
-        return (ereignis == null || ereignis.isEmpty()) ? "Keine weiteren Angaben":ereignis;
+        return (ereignis == null || ereignis.isEmpty()) ? "Keine weiteren Angaben" : ereignis;
     }
 
-    private static String determineAdditionalInfo(File txtFile) throws FileNotFoundException{
+    private static String determineAdditionalInfo(File txtFile) throws FileNotFoundException {
         Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
-        int lineOfCountry = getLineNumberOf("DE-Brandenburg", faxContentMap); 
+        int lineOfCountry = getLineNumberOf("DE-Brandenburg", faxContentMap);
         String additionalInfo = getLine(lineOfCountry - 3, faxContentMap).trim();
         return additionalInfo;
-        
+
     }
-    
+
     private static Adress determineAddress(File txtFile) throws FileNotFoundException {
         Adress address = new Adress();
         Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
-        int lineOfCountry = getLineNumberOf("DE-Brandenburg", faxContentMap); 
+        int lineOfCountry = getLineNumberOf("DE-Brandenburg", faxContentMap);
         String plzCityAndArea = getLine(lineOfCountry - 1, faxContentMap).replace("Einsatzort:", "").trim();
         String streetHouseNumber = getLine(lineOfCountry - 2, faxContentMap).replace("Einsatzort:", "").trim();
         int i = 0;
@@ -222,12 +247,15 @@ public class OCRToAlarmMapper {
     }
 
     private static String flatten(String s) {
-        return s.toLowerCase()
-                .replaceAll("ä", "ae")
-                .replaceAll("ö", "oe")
-                .replaceAll("ß", "ss")
-                .replaceAll("ü", "ue")
-                .replaceAll("-", "")
-                .replace(" ", "");
+        if (s != null) {
+            return s.toLowerCase()
+                    .replaceAll("ä", "ae")
+                    .replaceAll("ö", "oe")
+                    .replaceAll("ß", "ss")
+                    .replaceAll("ü", "ue")
+                    .replaceAll("-", "")
+                    .replace(" ", "");
+        }
+        return s;
     }
 }

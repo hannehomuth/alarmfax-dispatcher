@@ -63,9 +63,9 @@ public class OCRToAlarmMapper {
     private static Date getPossibleAlarmTime(File txtFile) throws FileNotFoundException {
         Date d = null;
         Map<Integer, String> faxContentMap = getFileContentMap(txtFile);
-        int lineOfDate = getLineNumberOf("Alarmzeit:", faxContentMap);
+        int lineOfDate = getLineNumberOf("Alarmzeit", faxContentMap);
         String line = flatten(getLine(lineOfDate, faxContentMap)).toLowerCase();
-        String replace = line.replace("alarmzeit:", "");
+        String replace = line.replace("alarmzeit", "");
 
         if (replace.length() != 16) {
             LOG.warn("Illegal Date format in Alarmfax {}", replace);

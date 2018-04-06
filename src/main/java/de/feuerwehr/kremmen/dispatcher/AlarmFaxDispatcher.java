@@ -91,6 +91,8 @@ public class AlarmFaxDispatcher implements Recipient {
                             }
                         }
                     }
+                } else {
+                    LOG.warn("Alarmfax detected {}, Time valid {}", alarm.isAlarmfaxDetected(), alarm.isValidAlarmTime());
                 }
             }
         } catch (Throwable e) {
